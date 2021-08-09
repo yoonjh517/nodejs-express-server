@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const MongoClient = require("mongodb").MongoClient;
 
+app.set("view engine", "ejs");
 app.use(express.urlencoded({ extended: true }));
 
 var db;
@@ -23,6 +24,15 @@ app.get("/", (req, res) => {
 
 app.get("/write", (req, res) => {
   res.sendFile(__dirname + "/write.html");
+});
+
+app.get("/list", (req, res) => {
+  db.collection("post")
+    .find()
+    .toArray((err, result) => {
+      console.log(result);
+      res.render("list.ejs", { posts: result });
+    });
 });
 
 app.post("/add", (req, res) => {
