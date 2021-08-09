@@ -36,11 +36,26 @@ app.get("/list", (req, res) => {
 });
 
 app.post("/add", (req, res) => {
-  res.send("sent");
-  db.collection("post").insertOne(
-    { title: req.body.title, date: req.body.date },
-    (err, result) => {
-      console.log("saved");
-    }
-  );
+  db.collection("counter").findOne({ name: "postsNumber" }, (err, result) => {
+    var postsNumber = result.totalPost;
+    db.collection("post").insertOne(
+      {
+        _id: postsNumber + 1,
+        title: req.body.title,
+        date: req.body.date,
+      },
+      (err, result) => {
+        db.collection("counter").updateOne(
+          { name: "postsNumber" },
+          { $inc: { totalPost: 1 } },
+          (err, result) => {
+            if (err) {
+              return console.log(err);
+            }
+            res.send("sent");
+          }
+        );
+      }
+    );
+  });
 });
