@@ -9,6 +9,8 @@ MongoClient.connect(
   "mongodb+srv://yoonjh517:Zpfhfh12@cluster0.qcnsn.mongodb.net/Cluster0?retryWrites=true&w=majority",
   (err, client) => {
     if (err) return console.log(err);
+    db = client.db("todoapp");
+
     app.listen(8000, function () {
       console.log("listening on 8000 and mongodb connected");
     });
@@ -24,6 +26,11 @@ app.get("/write", (req, res) => {
 });
 
 app.post("/add", (req, res) => {
-  console.log(req.body);
   res.send("sent");
+  db.collection("post").insertOne(
+    { title: req.body.title, date: req.body.date },
+    (err, result) => {
+      console.log("saved");
+    }
+  );
 });
